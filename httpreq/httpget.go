@@ -2,9 +2,58 @@ package httpreq
 
 import (
 	"encoding/json"
+	"github.com/PuerkitoBio/goquery"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
+
+// 解析网页
+type JingTingAudioFiction struct {
+	Title string   // 小说名称
+	Class string	// 类别
+	Author string	// 作者
+	Announcer string 	// 播音
+	Hits string 		// 人气
+	State string		// 状态
+	UpdateTime string   // 时间
+	Intro string // 简介
+	Plist []string    // 获取信息的列表
+}
+
+func ParsePage(url string) (*JingTingAudioFiction, error) {
+	var jt  = &JingTingAudioFiction{
+		Plist: make([]string, 0),
+	}
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		log.Println("goquery failed parse bofy")
+	}
+	// 解析出基本信息
+	jt.Title = doc.Find(".binfo h1").Text()
+
+	infoPList := doc.Find(".binfo p").Map(func(i int, s *goquery.Selection) string {
+		return s.Text()
+	})
+	jt.Class = infoPList[0][9:]
+	jt.Author = infoPList[1][9:]
+	jt.Announcer = infoPList[2][9:]
+	jt.Hits = infoPList[3][9:]
+	jt.State = infoPList[4][9:]
+	jt.UpdateTime = infoPList[5][9:]
+	// 解析出简介
+	jt.Intro = doc.Find(".intro p").Text()
+	jt.Plist = doc.Find(".playlist ul li a").Map(func(i int, s *goquery.Selection) string{
+		url, _ = s.Attr("href")
+		return url
+	})
+	return jt, nil
+}
 
 func Gethttp(url string) ([]byte, error) {
 	resp, err := http.Get(url)
@@ -15,6 +64,7 @@ func Gethttp(url string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return msg, err
 }
 

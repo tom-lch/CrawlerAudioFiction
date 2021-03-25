@@ -16,21 +16,18 @@ func GetEveryPage(start, end int, url string) {
 		index := strconv.Itoa(i)
 		host := url + index + ".html"
 		fmt.Println(host)
-		msg, err := httpreq.Gethttp(host)
+		jt, err := httpreq.ParsePage(host)
 		if err != nil {
 			log.Println(host, err)
 		}
-		ParsePage(msg)
+		// 存入数据库
+		fmt.Println(jt)
 	}
 }
 
-// 解析网页
-func ParsePage(info []byte) {
-	fmt.Println(string(info))
-	re := 
-}
+
 
 func main() {
 	fmt.Println("start")
-	GetEveryPage(2345, 2346, "http://www.audio699.com/book/")
+	GetEveryPage(1, 5411, "http://www.audio699.com/book/")
 }
