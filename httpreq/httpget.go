@@ -1,12 +1,13 @@
 package httpreq
 
 import (
+	"CrawlerAudioFiction/model"
 	"encoding/json"
-	"github.com/PuerkitoBio/goquery"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"CrawlerAudioFiction/model"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 // 解析网页
@@ -49,7 +50,7 @@ func ParseJingTingPage(url string) (*model.JingTingData, error) {
 	jt.UpdateTime = infoPList[5][9:]
 	// 解析出简介
 	jt.Intro = doc.Find(".intro p").Text()
-	jt.Plist = doc.Find(".playlist ul li a").Map(func(i int, s *goquery.Selection) string{
+	jt.Plist = doc.Find(".playlist ul li a").Map(func(i int, s *goquery.Selection) string {
 		url, _ = s.Attr("href")
 		return url
 	})
@@ -100,4 +101,28 @@ func HeaderGethttp(url string) ([]byte, error) {
 		return nil, err
 	}
 	return msg, err
+}
+
+func ParseXiMaLaYaPage(url string) []string {
+	client := &http.Client{}
+	reqest, err := http.NewRequest("GET", url, nil)
+	reqest.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36")
+	// reqest.Header.Add("X-Requested-With", "xxxx")
+	if err != nil {
+		panic(err)
+	}
+	//处理返回结果
+	resp, err := client.Do(reqest)
+	// resp, err := http.Get(url)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	defer resp.Body.Close()
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	categoryListName := doc.Find(".category-filter-value-list a").Map(func(i int, s *goquery.Selection) string {
+		name, _ := s.Attr("data-code")
+		return name
+	})
+	return categoryListName
 }

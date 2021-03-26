@@ -16,7 +16,10 @@ import (
 // 获取第一页拿到最开始的全部page和count
 func GetFirstPageInfo(url string) (numPages, numResults, pageSize int) {
 	var biliBiliSearchPageAll model.BiliBiliSearchPageAll
-	httpreq.ExecGet(&biliBiliSearchPageAll, url, httpreq.HeaderGethttp)
+	err := httpreq.ExecGet(&biliBiliSearchPageAll, url, httpreq.HeaderGethttp)
+	if err != nil {
+		log.Println(err)
+	}
 	return biliBiliSearchPageAll.Data.NumPages, biliBiliSearchPageAll.Data.NumResults, biliBiliSearchPageAll.Data.PageSize
 }
 
@@ -40,13 +43,16 @@ func GetFirstPageInfo(url string) (numPages, numResults, pageSize int) {
 
 func GetPageDetialInfo(url string, stc *stx.ServiceContext) {
 	var biliBiliPageInfo model.BiliBilPageInfo
-	httpreq.ExecGet(&biliBiliPageInfo, url, httpreq.HeaderGethttp)
+	err := httpreq.ExecGet(&biliBiliPageInfo, url, httpreq.HeaderGethttp)
+	if err != nil {
+		log.Println(err)
+	}
 
 	for _, video := range biliBiliPageInfo.Data.Result {
 		video.SetID()
 		videoUrl := "https://www.bilibili.com/video/" + video.Bvid
 		log.Println(video, videoUrl)
-		// insertCode := `INSERT INTO jingting (id, aid, arcrank, arcurl, author, bvid, description, duration, vid, is_union_video, mid, pic, pubdate, tag, title, type, typeid, typename, videourl) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+		// insertCode := `INSERT INTO bilibili (id, aid, arcrank, arcurl, author, bvid, description, duration, vid, is_union_video, mid, pic, pubdate, tag, title, type, typeid, typename, videourl) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 		// stc.RW.Lock()
 		// result, err := stc.DB.Exec(insertCode, video.ID, video.Arcrank, video.Arcurl, video.Author, video.Bvid, video.Description, video.Duration, video.VID, video.IsUnionVideo, video.MID, video.Pic, video.Pubdate, video.Tag, video.Title,  video.Type,  video.Typeid, video.Typename, videoUrl)
 		// if err != nil {
@@ -56,7 +62,7 @@ func GetPageDetialInfo(url string, stc *stx.ServiceContext) {
 		// stc.RW.Unlock()
 	}
 }
-
+// 根据关键词进行搜书
 func CrawlBiliBili(keyword string, stc *stx.ServiceContext) {
 	// keyword := "%E5%A4%A9%E5%AE%98%E8%B5%90%E7%A6%8F%E6%9C%89%E5%A3%B0%E5%B0%8F%E8%AF%B4"
 	word := keyword + "有声小说"

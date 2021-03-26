@@ -97,3 +97,38 @@ func (vi *VideoInfo) SetID() {
 	val := h.Sum32()
 	vi.ID = strconv.Itoa(2000+rand.Intn(1000)) + strconv.Itoa(int(val))
 }
+
+type XimalayaPageInfo struct {
+	Data XimalayaData `json:"data"`
+}
+
+type XimalayaData struct {
+	Albums []Album `json:"albums"`
+}
+
+type Album struct {
+	ID             string
+	AlbumId        int    `json:"albumId"`
+	AlbumSubscript int    `json:"albumSubscript"`
+	AnchorName     string `json:"anchorName"`
+	CoverPath      string `json:"coverPath"`
+	IsFinished     int    `json:"isFinished"`
+	IsPaid         bool   `json:"isPaid"`
+	Link           string `json:"link"`
+	PlayCount      int    `json:"playCount"`
+	Title          string `json:"title"`
+	TrackCount     int    `json:"trackCount"`
+	Uid            int    `json:"uid"`
+	VipType        int    `json:"vipType"`
+}
+
+func (al *Album) SetID() {
+	if len(al.ID) > 0 {
+		return
+	}
+	info := fmt.Sprintf("%s/%s/%s/%d/%d", al.Title, al.Link, al.AnchorName, al.Uid, al.AlbumId)
+	h := fnv.New32a()
+	h.Write([]byte(info))
+	val := h.Sum32()
+	al.ID = strconv.Itoa(3000+rand.Intn(1000)) + strconv.Itoa(int(val))
+}
