@@ -6,26 +6,27 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"CrawlerAudioFiction/model"
 )
 
 // 解析网页
-type JingTingAudioFiction struct {
-	Title string   // 小说名称
-	Class string	// 类别
-	Author string	// 作者
-	Announcer string 	// 播音
-	Hits string 		// 人气
-	State string		// 状态
-	UpdateTime string   // 时间
-	Intro string // 简介
-	Plist []string    // 获取信息的列表
-}
 
-func ParsePage(url string) (*JingTingAudioFiction, error) {
-	var jt  = &JingTingAudioFiction{
+// parse http://www.audio699.com/ data
+func ParseJingTingPage(url string) (*model.JingTingData, error) {
+	var jt = &model.JingTingData{
 		Plist: make([]string, 0),
 	}
-	resp, err := http.Get(url)
+	jt.SetID()
+	client := &http.Client{}
+	reqest, err := http.NewRequest("GET", url, nil)
+	reqest.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36")
+	// reqest.Header.Add("X-Requested-With", "xxxx")
+	if err != nil {
+		panic(err)
+	}
+	//处理返回结果
+	resp, err := client.Do(reqest)
+	// resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}

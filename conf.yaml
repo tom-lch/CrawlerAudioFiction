@@ -1,0 +1,7 @@
+mysql:
+  host: rm-uf6u3aeu969v06ggt5o.mysql.rds.aliyuncs.com
+  port: 3306
+  name: root
+  pwd: Alidan01123382
+  dbname: xsearch
+  table: test
