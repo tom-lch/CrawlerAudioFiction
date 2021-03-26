@@ -46,7 +46,7 @@ func GetEveryPage(start, end int, url string, stc *stx.ServiceContext) {
 }
 
 // 爬取全站信息
-func CrawlerJingTing(stc *stx.ServiceContext) {
+func CrawlJingTing(stc *stx.ServiceContext) {
 	fmt.Println("start")
 	// GetEveryPage(1, 5411, "http://www.audio699.com/book/", stc)
 	GetEveryPage(2586, 2587, "http://www.audio699.com/book/", stc)

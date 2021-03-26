@@ -7,7 +7,8 @@ import (
 
 func main() {
 	stc := stx.NewServiceContext("conf.yaml")
-	// audio.CrawlerJingTing(stc)
+	// audio.CrawlJingTing(stc)
 	// audio.CrawlBiliBili("大奉打更人", stc)
-	audio.CrawlXimalaya(stc)
+	// audio.CrawlXimalaya(stc)
+	audio.CrawlQingTing(stc)
 }

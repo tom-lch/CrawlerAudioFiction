@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"time"
 )
 
 // https://i.qingting.fm/capi/neo-channel-filter?category=521&attrs=3290&curpage=1 女生
@@ -18,7 +19,6 @@ func GetQingTingPageInfo(url string, stc *stx.ServiceContext) {
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println(qt)
 	for _, Channel := range qt.Data.Channels {
 		Channel.SetID()
 		Channelurl := fmt.Sprintf("https://www.qingting.fm/channels/%d", Channel.QtID)
@@ -30,15 +30,16 @@ func GetQingTingPageInfo(url string, stc *stx.ServiceContext) {
 		// 	log.Println("插入数据失败：", err)
 		// }
 		// log.Println("插入成功：", result)
-		// stx.RW.Unlock()
+		// stx.RW.Unlock()	
 	}
+	time.Sleep(3 * time.Second)
 }
 
 func CrawlQingTing(stc *stx.ServiceContext) {
 	//根据男生 女生来搜索蜻蜓
 	for i := 3289; i <= 3290; i++ {
 		url := fmt.Sprintf("https://i.qingting.fm/capi/neo-channel-filter?category=521&attrs=%d&curpage=", i)
-		for page := 1; page < 76; page++ {
+		for page := 15; page < 16; page++ {
 			url = url + strconv.Itoa(page)
 			GetQingTingPageInfo(url, stc)
 		}
