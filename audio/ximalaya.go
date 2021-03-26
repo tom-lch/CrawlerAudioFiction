@@ -4,7 +4,6 @@ import (
 	"CrawlerAudioFiction/httpreq"
 	"CrawlerAudioFiction/model"
 	"CrawlerAudioFiction/stx"
-	"time"
 
 	"fmt"
 	"log"
@@ -15,19 +14,19 @@ import (
 // 喜马拉雅规则比较复杂，只能爬取部分的数据，并不能获得全部的有效数据
 // 1 https://www.ximalaya.com/youshengshu/tongshu/ 抓取该页面小的有声书的所有分类
 
-func GetAllCategory(url string) {
+func GetAllCategory(url string, stc *stx.ServiceContext) {
 	CategoryNames := httpreq.ParseXiMaLaYaPage(url)
 	for i := 0; i < len(CategoryNames); i++ {
 		name := CategoryNames[i]
 		for page := 1; page < 11; page++ {
 			url := fmt.Sprintf("https://www.ximalaya.com/revision/category/queryCategoryPageAlbums?category=youshengshu&subcategory=%s&meta=&sort=0&page=%d&perPage=30", name, page)
-			GetDetailPageInfo(url)
+			GetDetailPageInfo(url, stc)
 			// time.Sleep(time.Second * 5)
 		}
 	}
 }
 
-func GetDetailPageInfo(url string) {
+func GetDetailPageInfo(url string, stc *stx.ServiceContext) {
 	var xm model.XimalayaPageInfo
 	err := httpreq.ExecGet(&xm, url, httpreq.HeaderGethttp)
 	if err != nil {
@@ -52,5 +51,5 @@ func GetDetailPageInfo(url string) {
 // 抓取web浏览器上的分类数据
 func CrawlXimalaya(stc *stx.ServiceContext) {
 	url := "https://www.ximalaya.com/youshengshu/tongshu/"
-	GetAllCategory(url)
+	GetAllCategory(url, stc)
 }

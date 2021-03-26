@@ -132,3 +132,34 @@ func (al *Album) SetID() {
 	val := h.Sum32()
 	al.ID = strconv.Itoa(3000+rand.Intn(1000)) + strconv.Itoa(int(val))
 }
+
+type QingTingPageInfo struct {
+	Data QingTingData `json:"data"`
+}
+
+type QingTingData struct {
+	Channels []QingTingPageChannel `json:"channels"`
+}
+
+type QingTingPageChannel struct {
+	ID          string
+	Cover       string `json:"cover"`
+	Description string `json:"description"`
+	QtID        int    `json:"id"`
+	Playcount   string `json:"playcount"`
+	Score       string `json:"playcount"`
+	Title       string `json:"title"`
+	Type        string `json:"type"`
+	UpdateTime  string `json:"update_time"`
+}
+
+func (qt *QingTingPageChannel) SetID() {
+	if len(qt.ID) > 0 {
+		return
+	}
+	info := fmt.Sprintf("%s/%d", qt.Title, qt.QtID)
+	h := fnv.New32a()
+	h.Write([]byte(info))
+	val := h.Sum32()
+	qt.ID = strconv.Itoa(4000+rand.Intn(1000)) + strconv.Itoa(int(val))
+}
