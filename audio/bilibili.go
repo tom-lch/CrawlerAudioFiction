@@ -23,23 +23,6 @@ func GetFirstPageInfo(url string) (numPages, numResults, pageSize int) {
 	return biliBiliSearchPageAll.Data.NumPages, biliBiliSearchPageAll.Data.NumResults, biliBiliSearchPageAll.Data.PageSize
 }
 
-// AID int `json:"aid"`
-// Arcrank string `json:"arcrank"`
-// Arcurl string `json:"arcurl"`
-// Author string `json:"author"`
-// Bvid string `json:"bvid"`
-// Description string `json:"description"`
-// Duration string `json:"duration"`
-// VID int `json:"vid"`
-// IsUnionVideo int `json:"is_union_video"`
-// MID int `json:"mid"`
-// Pic string `json:"pic"`
-// Pubdate int `json:"pubdate"`
-// Tag string `json:"tag"`
-// Title string `json:"title"`
-// Type string `json:"type"`
-// Typeid string `json:"typeid"`
-// Typename string `json:"typename"``
 
 func GetPageDetialInfo(url string, stc *stx.ServiceContext) {
 	var biliBiliPageInfo model.BiliBilPageInfo

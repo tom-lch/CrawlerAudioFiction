@@ -163,3 +163,27 @@ func (qt *QingTingPageChannel) SetID() {
 	val := h.Sum32()
 	qt.ID = strconv.Itoa(4000+rand.Intn(1000)) + strconv.Itoa(int(val))
 }
+
+// juting
+type JuTingData struct{
+	ID string
+	Alltitle string
+	Title string
+	Url string
+	Author string
+	Announcer  string
+	Intro      string
+	VideoList []string
+	Videolists string
+}
+
+func (jt *JuTingData)SetID() {
+	if len(jt.ID) > 0 {
+		return
+	}
+	info := fmt.Sprintf("%s/%s/%s/%s", jt.Title, jt.Author, jt.Announcer, jt.Url[23:])
+	h := fnv.New32a()
+	h.Write([]byte(info))
+	val := h.Sum32()
+	jt.ID = strconv.Itoa(5000+rand.Intn(1000)) + strconv.Itoa(int(val))
+}

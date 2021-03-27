@@ -10,5 +10,6 @@ func main() {
 	// audio.CrawlJingTing(stc)
 	// audio.CrawlBiliBili("大奉打更人", stc)
 	// audio.CrawlXimalaya(stc)
-	audio.CrawlQingTing(stc)
+	// audio.CrawlQingTing(stc)
+	audio.CrawlJuTing(stc)
 }

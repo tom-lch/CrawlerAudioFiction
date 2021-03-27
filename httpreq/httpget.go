@@ -17,7 +17,6 @@ func ParseJingTingPage(url string) (*model.JingTingData, error) {
 	var jt = &model.JingTingData{
 		Plist: make([]string, 0),
 	}
-	jt.SetID()
 	client := &http.Client{}
 	reqest, err := http.NewRequest("GET", url, nil)
 	reqest.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36")
@@ -54,6 +53,7 @@ func ParseJingTingPage(url string) (*model.JingTingData, error) {
 		url, _ = s.Attr("href")
 		return url
 	})
+	jt.SetID()
 	return jt, nil
 }
 
@@ -125,4 +125,71 @@ func ParseXiMaLaYaPage(url string) []string {
 		return name
 	})
 	return categoryListName
+}
+
+func ParseJuTingPageInfo(url string)([]string, []string, error) {
+	// 定义JuTing网的获取信息结构体
+	client := &http.Client{}
+	reqest, err := http.NewRequest("GET", url, nil)
+	reqest.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36")
+	// reqest.Header.Add("X-Requested-With", "xxxx")
+	if err != nil {
+		panic(err)
+	}
+	//处理返回结果
+	resp, err := client.Do(reqest)
+	// resp, err := http.Get(url)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer resp.Body.Close()
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	titleList := doc.Find(".panel-body ul li").Map(func(i int, selection *goquery.Selection) string {
+		return selection.Find("a").Text()
+	})
+	urlList := doc.Find(".panel-body ul li").Map(func(i int, selection *goquery.Selection) string {
+		url, _ :=  selection.Find("a").Attr("href")
+		return url
+	})
+	return titleList, urlList, nil
+}
+
+func ParseJuTingOneInfo(url string, alltitle string)(model.JuTingData, error)  {
+	var jt model.JuTingData
+	jt.Url = url
+	jt.Alltitle = alltitle
+	client := &http.Client{}
+	reqest, err := http.NewRequest("GET", url, nil)
+	reqest.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36")
+	// reqest.Header.Add("X-Requested-With", "xxxx")
+	if err != nil {
+		panic(err)
+	}
+	//处理返回结果
+	resp, err := client.Do(reqest)
+	// resp, err := http.Get(url)
+	if err != nil {
+		return jt, err
+	}
+	defer resp.Body.Close()
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	jt.Title = doc.Find(".col-md-7.col-xs-12.col-sm-7 h3").Text()
+	authoranninfo := doc.Find(".col-md-7.col-xs-12.col-sm-7 p").Map(func(i int, selection *goquery.Selection) string {
+		return selection.Text()
+	})
+	jt.Author = authoranninfo[0]
+	jt.Announcer = authoranninfo[1]
+	jt.Intro = authoranninfo[2]
+	jt.VideoList = doc.Find(".panel.panel-success .panel-body div").Map(func(i int, selection *goquery.Selection) string {
+		uil, _ := selection.Find("div a").Attr("href")
+		return "https://www.yousxs.com/" + uil
+	})
+	val, err := json.Marshal(jt.VideoList)
+	if err != nil {
+		log.Println("编码报错")
+		return jt, err
+	}
+	jt.Videolists = string(val)
+	jt.SetID()
+	return jt, nil
 }
