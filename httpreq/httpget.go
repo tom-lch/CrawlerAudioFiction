@@ -193,3 +193,44 @@ func ParseJuTingOneInfo(url string, alltitle string)(model.JuTingData, error)  {
 	jt.SetID()
 	return jt, nil
 }
+
+// 幻听
+//type HuanTingData struct {
+//	ID string
+//	Title string
+//	Type string
+//	Author string
+//	Announcer  string
+//	Uptime string
+//	State string
+//}
+func ParseHuanTingInfo(url string) error {
+	var hts []model.HuanTingData
+	client := &http.Client{}
+	reqest, err := http.NewRequest("GET", url, nil)
+	reqest.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36")
+	// reqest.Header.Add("X-Requested-With", "xxxx")
+	if err != nil {
+		panic(err)
+	}
+	//处理返回结果
+	resp, err := client.Do(reqest)
+	// resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	doc.Find(".channelright .list_mod .clist ul").Map(func(i int, selection *goquery.Selection) string {
+		var ht model.HuanTingData
+		url, _ := selection.Find("li a").Attr("href")
+		title, _ := selection.Find("li a").Attr("title")
+		plist := selection.Find("li p").Map(func(i int, s *goquery.Selection) string {
+			return s.Text()
+		})
+		log.Println(url, title, plist)
+		hts = append(hts, ht)
+		return ""
+	})
+
+}

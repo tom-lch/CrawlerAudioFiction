@@ -187,3 +187,25 @@ func (jt *JuTingData)SetID() {
 	val := h.Sum32()
 	jt.ID = strconv.Itoa(5000+rand.Intn(1000)) + strconv.Itoa(int(val))
 }
+
+// HuanTing
+type HuanTingData struct {
+	ID string
+	Title string
+	Type string
+	Author string
+	Announcer  string
+	Uptime string
+	State string
+}
+
+func (jt *HuanTingData)SetID() {
+	if len(jt.ID) > 0 {
+		return
+	}
+	info := fmt.Sprintf("%s/%s/%s/%s", jt.Title, jt.Author, jt.Announcer, jt.Url[23:])
+	h := fnv.New32a()
+	h.Write([]byte(info))
+	val := h.Sum32()
+	jt.ID = strconv.Itoa(5000+rand.Intn(1000)) + strconv.Itoa(int(val))
+}
